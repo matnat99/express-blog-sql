@@ -16,18 +16,23 @@ const index = (req, res) => {
 
 // Show
 const show = (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
 
-  const post = posts.find((postElm) => postElm.id == id);
+  const postSql = "SELECT * FROM posts WHERE id = ?";
 
-  if (!post) {
-    return res.status(404).json({
-      error: "not found",
-      message: "Post non trovato",
-    });
-  }
+  connection.query(postSql, [id], (err, results) => {
+    if (err)
+      return res.status(500).json({
+        error: "Database query failed",
+      });
 
-  res.json(post);
+    if (results.length === 0)
+      return res.status(404).json({
+        error: "Post not found",
+      });
+
+    res.json(results[0]);
+  });
 };
 
 // Store
