@@ -2,16 +2,16 @@ const connection = require("../data/db_blog");
 
 // Index
 const index = (req, res) => {
-  let tagsFiltered = posts;
-  const { tags } = req.query;
+  const sql = "SELECT * FROM posts";
 
-  if (tags) {
-    tagsFiltered = tagsFiltered.filter((postElm) => {
-      return postElm.tags.includes(tags);
-    });
-  }
+  connection.query(sql, (err, results) => {
+    if (err)
+      return res.status(500).json({
+        error: "Database query failed",
+      });
 
-  res.json(tagsFiltered);
+    res.json(results);
+  });
 };
 
 // Show
