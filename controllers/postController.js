@@ -91,20 +91,17 @@ const modify = (req, res) => {
 
 // Destroy
 const destroy = (req, res) => {
-  const { id } = req.params;
+  const postSql = "DELETE FROM posts WHERE id = ?";
 
-  const post = posts.findIndex((postElm) => postElm.id == id);
+  const id = req.params.id;
 
-  if (post < 0) {
-    return res.status(404).json({
-      error: "not found",
-      message: "Post non trovato",
-    });
-  }
-
-  posts.splice(post, 1);
-
-  res.sendStatus(204);
+  connection.query(postSql, [id], (err) => {
+    if (err)
+      return res.status(500).json({
+        error: "Failed to delete pizza",
+      });
+    res.sendStatus(204);
+  });
 };
 
 module.exports = {
